@@ -1,5 +1,6 @@
 /** @param {...*} x */
 var out;
+var console;
 
 Sk.gensymcount = 0;
 
@@ -329,7 +330,6 @@ Compiler.prototype._checkSuspension = function(e) {
         this.setBlock(retblk);
 
         e = e || {lineno: "$currLineNo", col_offset: "$currColNo"};
-
         out ("if ($ret && $ret.$isSuspension) { return $saveSuspension($ret,'"+this.filename+"',"+e.lineno+","+e.col_offset+"); }");
 
         this.u.doesSuspend = true;
@@ -968,6 +968,7 @@ Compiler.prototype.outputSuspensionHelpers = function (unit) {
                 "susp.resume=function(){"+unit.scopename+".$wakingSuspension=susp; return "+unit.scopename+"("+(unit.ste.generator?"$gen":"")+"); };" +
                 "susp.data=susp.child.data;susp.$blk=$blk;susp.$loc=$loc;susp.$gbl=$gbl;susp.$exc=$exc;susp.$err=$err;susp.$postfinally=$postfinally;" +
                 "susp.$filename=$filename;susp.$lineno=$lineno;susp.$colno=$colno;" +
+                'Sk.onCodeLineChange && Sk.onCodeLineChange($lineno,$colno);',
                 "susp.optional=susp.child.optional;" +
                 (hasCell ? "susp.$cell=$cell;" : "");
 
